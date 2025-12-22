@@ -22,8 +22,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.StreamUpdateStreamManager;
@@ -98,7 +99,7 @@ public class ODataStreamUpdateRequestImpl
     private InputStream input = null;
 
     private ODataStreamUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }

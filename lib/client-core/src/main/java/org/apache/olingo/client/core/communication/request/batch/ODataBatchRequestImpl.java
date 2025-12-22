@@ -23,8 +23,8 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
@@ -65,7 +65,7 @@ public class ODataBatchRequestImpl
   }
 
   @Override
-  protected HttpResponse doExecute() {
+  protected ClassicHttpResponse doExecute() {
     if (odataClient.getConfiguration().isContinueOnError()) {
       setPrefer(new ODataPreferences().continueOnError());
     }
@@ -97,7 +97,7 @@ public class ODataBatchRequestImpl
   protected class ODataBatchResponseImpl extends AbstractODataResponse implements ODataBatchResponse {
 
     protected ODataBatchResponseImpl(
-            final ODataClient odataClient, final HttpClient httpClient, final HttpResponse res) {
+            final ODataClient odataClient, final HttpClient httpClient, final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }

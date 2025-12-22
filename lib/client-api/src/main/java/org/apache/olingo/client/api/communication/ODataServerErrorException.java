@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication;
 
-import org.apache.http.StatusLine;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 import java.io.InputStream;

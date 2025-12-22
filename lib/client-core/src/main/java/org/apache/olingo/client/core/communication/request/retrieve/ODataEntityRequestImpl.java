@@ -19,9 +19,11 @@
 package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -53,7 +55,7 @@ public class ODataEntityRequestImpl<E extends ClientEntity>
   }
 
   @Override
-  public ODataRetrieveResponse<E> execute() {
+  public ODataRetrieveResponse<E> execute() throws URISyntaxException {
     return new ODataEntityResponseImpl(odataClient, httpClient, doExecute());
   }
 
@@ -65,7 +67,7 @@ public class ODataEntityRequestImpl<E extends ClientEntity>
     private E entity = null;
 
     private ODataEntityResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }

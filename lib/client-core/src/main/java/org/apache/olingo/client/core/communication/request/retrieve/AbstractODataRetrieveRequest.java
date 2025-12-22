@@ -20,9 +20,11 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -48,7 +50,7 @@ public abstract class AbstractODataRetrieveRequest<T>
   }
 
   @Override
-  public abstract ODataRetrieveResponse<T> execute();
+  public abstract ODataRetrieveResponse<T> execute() throws URISyntaxException;
 
   /**
    * This kind of request doesn't have any payload: null will be returned.
@@ -65,7 +67,7 @@ public abstract class AbstractODataRetrieveRequest<T>
           extends AbstractODataResponse implements ODataRetrieveResponse<T> {
 
     protected AbstractODataRetrieveResponse(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }

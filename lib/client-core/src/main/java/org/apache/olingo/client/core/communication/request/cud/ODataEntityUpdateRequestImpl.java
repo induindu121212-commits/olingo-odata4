@@ -22,10 +22,8 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
@@ -86,10 +84,10 @@ public class ODataEntityUpdateRequestImpl<E extends ClientEntity>
   @Override
   public ODataEntityUpdateResponse<E> execute() {
     final InputStream input = getPayload();
-    ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
+    (request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
-      final HttpResponse httpResponse = doExecute();
+      final ClassicHttpResponse httpResponse = doExecute();
       final ODataEntityUpdateResponseImpl response =
               new ODataEntityUpdateResponseImpl(odataClient, httpClient, httpResponse);
       if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {

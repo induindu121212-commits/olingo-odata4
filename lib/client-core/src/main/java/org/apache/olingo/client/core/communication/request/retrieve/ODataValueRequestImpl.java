@@ -21,8 +21,8 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -54,7 +54,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ClientPr
 
   @Override
   public ODataRetrieveResponse<ClientPrimitiveValue> execute() {
-    final HttpResponse res = doExecute();
+    final ClassicHttpResponse res = doExecute();
     return new ODataValueResponseImpl(odataClient, httpClient, res);
   }
 
@@ -66,7 +66,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ClientPr
     private ClientPrimitiveValue value = null;
 
     private ODataValueResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }

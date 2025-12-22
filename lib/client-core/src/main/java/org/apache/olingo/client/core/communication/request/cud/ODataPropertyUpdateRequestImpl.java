@@ -20,11 +20,10 @@ package org.apache.olingo.client.core.communication.request.cud;
 
 import java.io.InputStream;
 import java.net.URI;
-
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
@@ -74,7 +73,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   @Override
   public ODataPropertyUpdateResponse execute() {
     final InputStream input = getPayload();
-    ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
+    request.setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
       return new ODataPropertyUpdateResponseImpl(odataClient, httpClient, doExecute());

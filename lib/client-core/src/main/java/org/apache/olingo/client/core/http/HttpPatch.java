@@ -18,15 +18,13 @@
  */
 package org.apache.olingo.client.core.http;
 
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-
 import java.net.URI;
 
 /**
  * Class identifying PATCH HTTP method.
  * @NotThreadSafe
  */
-public class HttpPatch extends HttpEntityEnclosingRequestBase {
+public class HttpPatch extends ClassicHttpRequest {
 
   public final static String METHOD_NAME = "PATCH";
 
@@ -44,7 +42,7 @@ public class HttpPatch extends HttpEntityEnclosingRequestBase {
    */
   public HttpPatch(final URI uri) {
     super();
-    setURI(uri);
+    setUri(uri);
   }
 
   /**
