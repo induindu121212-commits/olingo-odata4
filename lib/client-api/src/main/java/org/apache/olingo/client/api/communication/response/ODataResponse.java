@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
@@ -124,5 +125,5 @@ public interface ODataResponse {
    * for client-side scenarios where application layer code processes only the response headers and ignores the response
    * entity.
    */
-  void close();
+  void close() throws IOException;
 }

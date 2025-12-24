@@ -32,20 +32,14 @@ import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
 import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.grants.refresh.RefreshTokenGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.net.URIBuilder;
 import org.apache.olingo.client.core.http.AbstractOAuth2HttpClientFactory;
 import org.apache.olingo.client.core.http.OAuth2Exception;
 import org.apache.olingo.fit.rest.OAuth2Provider;
@@ -92,7 +86,7 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
     // Disable automatic redirects handling
     final HttpParams params = new BasicHttpParams();
     params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
-    final DefaultHttpClient httpClient = new DefaultHttpClient(params);
+    final CloseableHttpClient httpClient = new DefaultHttpClient(params);
 
     JsonNode oAuthAuthorizationData = null;
     String authenticityCookie = null;
@@ -100,7 +94,7 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
       // 1. Need to (basic) authenticate against the OAuth2 service
       final HttpGet method = new HttpGet(authURI);
       method.addHeader("Authorization", "Basic " + Base64.encodeBase64String("odatajclient:odatajclient".getBytes()));
-      final HttpResponse response = httpClient.execute(method);
+      final ClassicHttpResponse response = httpClient.execute(method);
 
       // 2. Pull out OAuth2 authorization data and "authenticity" cookie (CXF specific)
       oAuthAuthorizationData = new XmlMapper().readTree(EntityUtils.toString(response.getEntity()));
@@ -128,10 +122,10 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
       method.addHeader("Authorization", "Basic " + Base64.encodeBase64String("odatajclient:odatajclient".getBytes()));
       method.addHeader("Cookie", authenticityCookie);
 
-      final HttpResponse response = httpClient.execute(method);
+      final ClassicHttpResponse response = httpClient.execute(method);
 
       final Header locationHeader = response.getFirstHeader("Location");
-      if (response.getStatusLine().getStatusCode() != 303 || locationHeader == null) {
+      if (response.getCode() != 303 || locationHeader == null) {
         throw new IllegalStateException("OAuth flow is broken");
       }
 
@@ -157,19 +151,18 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
   }
 
   @Override
-  protected void accessToken(final DefaultHttpClient client) throws OAuth2Exception {
-    client.addRequestInterceptor(new HttpRequestInterceptor() {
-
-      @Override
-      public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
-        request.removeHeaders(HttpHeaders.AUTHORIZATION);
-        request.addHeader(HttpHeaders.AUTHORIZATION, OAuthClientUtils.createAuthorizationHeader(accessToken));
-      }
+  protected void accessToken(final HttpClientBuilder builder) throws OAuth2Exception {
+      builder.addRequestInterceptorFirst((request, entity,context) -> {
+          request.removeHeaders(HttpHeaders.AUTHORIZATION);
+          request.addHeader(
+                  HttpHeaders.AUTHORIZATION,
+                  OAuthClientUtils.createAuthorizationHeader(accessToken)
+          );
     });
   }
 
   @Override
-  protected void refreshToken(final DefaultHttpClient client) throws OAuth2Exception {
+  protected void refreshToken(final CloseableHttpClient client) throws OAuth2Exception {
     final String refreshToken = accessToken.getRefreshToken();
     if (refreshToken == null) {
       throw new OAuth2Exception("No OAuth2 refresh token");

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.Future;
 
@@ -36,7 +37,7 @@ public interface ODataBasicRequest<T extends ODataResponse> extends ODataRequest
    *
    * @return return an OData response.
    */
-  T execute() throws URISyntaxException;
+  T execute() throws URISyntaxException, IOException;
 
   /**
    * Async request execute.

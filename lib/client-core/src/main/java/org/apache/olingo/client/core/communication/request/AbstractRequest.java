@@ -18,6 +18,7 @@ package org.apache.olingo.client.core.communication.request;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -58,8 +59,7 @@ public abstract class AbstractRequest {
       try {
         final ODataRuntimeException exception = ODataErrorResponseChecker.checkResponse(
                 odataClient,
-                response.getCode(),
-                response.getReasonPhrase(),
+                new StatusLine(response),
                 response.getEntity() == null ? null : response.getEntity().getContent(),
                 contentType);
         if (exception != null) {

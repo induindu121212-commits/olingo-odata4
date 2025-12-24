@@ -21,16 +21,12 @@ package org.apache.olingo.client.core.http;
 import java.io.IOException;
 import java.net.URI;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -68,49 +64,42 @@ public abstract class AbstractOAuth2HttpClientFactory
 
   protected abstract void init() throws OAuth2Exception;
 
-  protected abstract void accessToken(DefaultHttpClient client) throws OAuth2Exception;
+  protected abstract void accessToken(CloseableHttpClient client) throws OAuth2Exception;
 
-  protected abstract void refreshToken(DefaultHttpClient client) throws OAuth2Exception;
+  protected abstract void refreshToken(CloseableHttpClient client) throws OAuth2Exception;
 
   @Override
-  public HttpClient create(final HttpMethod method, final URI uri) {
+  public CloseableHttpClient create(final HttpMethod method, final URI uri) {
     if (!isInited()) {
       init();
     }
 
-    final DefaultHttpClient httpClient = wrapped.create(method, uri);
-    accessToken(httpClient);
+      HttpClientBuilder builder = HttpClients.custom();
 
-    httpClient.addRequestInterceptor(new HttpRequestInterceptor() {
+      // Access token interceptor
+      accessToken(builder);
 
-      @Override
-      public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
-        if (request instanceof HttpUriRequest) {
-          currentRequest = (HttpUriRequest) request;
-        } else {
-          currentRequest = null;
-        }
-      }
-    });
-    httpClient.addResponseInterceptor(new HttpResponseInterceptor() {
-
-      @Override
-      public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-          refreshToken(httpClient);
-
-          if (currentRequest != null) {
-            httpClient.execute(currentRequest);
+      // Request interceptor
+      builder.addRequestInterceptorLast((request, entity, context) -> {
+          if (request instanceof ClassicHttpRequest) {
+              currentRequest = (ClassicHttpRequest) request;
+          } else {
+              currentRequest = null;
           }
-        }
-      }
-    });
+      });
 
-    return httpClient;
+      // Response interceptor
+      builder.addResponseInterceptorLast((response, entity, context) -> {
+          if (response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
+              refreshToken(builder);
+          }
+      });
+
+      return builder.build();
   }
 
   @Override
-  public void close(final HttpClient httpClient) {
+  public void close(final CloseableHttpClient httpClient) throws IOException {
     wrapped.close(httpClient);
   }
 

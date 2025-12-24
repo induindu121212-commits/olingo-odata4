@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.Header;
@@ -68,7 +68,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   /**
    * HTTP client.
    */
-  protected final HttpClient httpClient;
+  protected final CloseableHttpClient httpClient;
 
   /**
    * HTTP response.
@@ -109,7 +109,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   private byte[] inputContent = null;
 
   public AbstractODataResponse(
-      final ODataClient odataClient, final HttpClient httpclient, final ClassicHttpResponse res) {
+          final ODataClient odataClient, final CloseableHttpClient httpclient, final ClassicHttpResponse res) {
 
     this.odataClient = odataClient;
     this.httpClient = httpclient;
@@ -247,7 +247,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   }
 
   @Override
-  public void close() {
+  public void close() throws IOException {
     closeHttpResponse();
     odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
 

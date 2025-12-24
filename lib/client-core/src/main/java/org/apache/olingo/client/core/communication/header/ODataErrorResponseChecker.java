@@ -47,7 +47,7 @@ public final class ODataErrorResponseChecker {
   }
 
   public static ODataRuntimeException checkResponse(
-          final ODataClient odataClient, final StatusLine statusLine, final InputStream errorStream,
+          final ODataClient odataClient, final StatusLine statusLine, final InputStream entity,
           final ContentType contentType) {
 
     ODataRuntimeException result;
