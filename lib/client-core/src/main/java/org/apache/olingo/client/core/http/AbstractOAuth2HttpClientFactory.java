@@ -21,12 +21,10 @@ package org.apache.olingo.client.core.http;
 import java.io.IOException;
 import java.net.URI;
 
-import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.*;
-import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -40,7 +38,7 @@ public abstract class AbstractOAuth2HttpClientFactory
 
   protected final URI oauth2TokenServiceURI;
 
-  protected HttpUriRequest currentRequest;
+  protected ClassicHttpRequest currentRequest;
 
   public AbstractOAuth2HttpClientFactory(final URI oauth2GrantServiceURI, final URI oauth2TokenServiceURI) {
     this(new DefaultHttpClientFactory(), oauth2GrantServiceURI, oauth2TokenServiceURI);
@@ -74,10 +72,10 @@ public abstract class AbstractOAuth2HttpClientFactory
       init();
     }
 
-      HttpClientBuilder builder = HttpClients.custom();
+      final HttpClientBuilder builder = HttpClients.custom();
 
-      // Access token interceptor
-      accessToken(builder);
+      // holder to reference the built client from inside interceptors
+      final CloseableHttpClient[] clientHolder = new CloseableHttpClient[1];
 
       // Request interceptor
       builder.addRequestInterceptorLast((request, entity, context) -> {
@@ -90,12 +88,19 @@ public abstract class AbstractOAuth2HttpClientFactory
 
       // Response interceptor
       builder.addResponseInterceptorLast((response, entity, context) -> {
-          if (response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
-              refreshToken(builder);
+          if (response.getCode() == HttpStatus.SC_UNAUTHORIZED && clientHolder[0] != null) {
+              refreshToken(clientHolder[0]);
           }
       });
 
-      return builder.build();
+      // build the client, store it to the holder, then perform initial access token request
+      final CloseableHttpClient client = builder.build();
+      clientHolder[0] = client;
+
+      // perform access token operations with the real client
+      accessToken(client);
+
+      return client;
   }
 
   @Override
