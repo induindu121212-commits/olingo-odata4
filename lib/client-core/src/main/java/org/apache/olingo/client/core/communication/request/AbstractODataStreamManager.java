@@ -72,7 +72,8 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
    * @param futureWrap wrapper of the Future object of the HttpResponse.
    * @param output stream to be piped to retrieve the payload.
    */
-  public AbstractODataStreamManager(final Wrapper<Future<ClassicHttpResponse>> futureWrap, final PipedOutputStream output) {
+  public AbstractODataStreamManager(final Wrapper<Future<ClassicHttpResponse>> futureWrap,
+                                    final PipedOutputStream output) {
     super(output);
 
     this.futureWrap = futureWrap;

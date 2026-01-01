@@ -89,14 +89,31 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     this.uri = odataRequest.getURI();
     Objects.requireNonNull(this.uri, "Target URI can't be null");
 
-    CloseableHttpClient _httpClient = HttpClients.custom()
-              .addRequestInterceptorFirst((request, entity, context) -> {
-                  if (odataClient.getConfiguration().isGzipCompression()) {
-                      request.addHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
-                  }
-              })
-              .build();
-    this.httpClient = _httpClient;
+    // Prefer HttpClient provided by the configured factory (tests may mock it), fallback to a default builder
+    CloseableHttpClient clientFromFactory = null;
+    try {
+      if (odataClient != null && odataClient.getConfiguration() != null
+          && odataClient.getConfiguration().getHttpClientFactory() != null) {
+        clientFromFactory = (CloseableHttpClient) odataClient.getConfiguration().getHttpClientFactory()
+            .create(odataRequest.getMethod(), this.uri);
+      }
+    } catch (final RuntimeException e) {
+      // ignore and fallback to default
+      clientFromFactory = null;
+    }
+
+    if (clientFromFactory != null) {
+      this.httpClient = clientFromFactory;
+    } else {
+      this.httpClient = HttpClients.custom()
+          .addRequestInterceptorFirst((request, entity, context) -> {
+            if (odataClient != null && odataClient.getConfiguration() != null
+                && odataClient.getConfiguration().isGzipCompression()) {
+              request.addHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
+            }
+          })
+          .build();
+    }
 
     // Create HttpUriRequest
     this.request = new HttpUriRequestBase(method, this.uri);
@@ -104,10 +121,12 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
       if (this.request instanceof HttpUriRequestBase && odataRequest instanceof AbstractODataBasicRequest) {
       AbstractODataBasicRequest<?> br = (AbstractODataBasicRequest<?>) odataRequest;
-          this.request.setEntity(
-                  new InputStreamEntity(br.getPayload(), ContentType.APPLICATION_OCTET_STREAM)
-          );
-    }
+          if (br.getPayload() != null) {
+            this.request.setEntity(
+                new InputStreamEntity(br.getPayload(), ContentType.APPLICATION_OCTET_STREAM)
+            );
+          }
+     }
   }
 
   @Override

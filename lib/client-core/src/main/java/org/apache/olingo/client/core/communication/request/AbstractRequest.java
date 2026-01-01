@@ -69,8 +69,8 @@ public abstract class AbstractRequest {
           throw exception;
         }
       } catch (IOException e) {
-        throw new ODataRuntimeException(
-                "Received '" + response.getCode() + " " +response.getReasonPhrase()+ "' but could not extract error body", e);
+        throw new ODataRuntimeException("Received '" + response.getCode() + " "
+                +response.getReasonPhrase()+ "' but could not extract error body", e);
       }
     }
   }

@@ -349,23 +349,31 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     for (Class<?> clazz : this.getClass().getDeclaredClasses()) {
       if (ODataResponse.class.isAssignableFrom(clazz)) {
         try {
-          final Constructor<?> constructor = clazz.getDeclaredConstructor(
-              this.getClass(), ODataClient.class, HttpClient.class, ClassicHttpResponse.class);
-          constructor.setAccessible(true);
-          return (V) constructor.newInstance(this, odataClient, httpClient, null);
-        } catch (Exception e) {
-          LOG.error("Error retrieving response class template instance", e);
-        }
-      }
-    }
+          for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+            final Class<?>[] params = constructor.getParameterTypes();
+            if (params.length == 4 && params[0] == this.getClass()
+                && params[1].isAssignableFrom(ODataClient.class)
+                && HttpClient.class.isAssignableFrom(params[2])
+                && ClassicHttpResponse.class.isAssignableFrom(params[3])) {
+              constructor.setAccessible(true);
+              return (V) constructor.newInstance(this, odataClient, httpClient, null);
+            }
+          }
+         } catch (Exception e) {
+           LOG.error("Error retrieving response class template instance", e);
+         }
+       }
+     }
 
     throw new IllegalStateException("No response class template has been found");
   }
 
   private CloseableHttpClient getHttpClient(final HttpMethod method, final URI uri) {
-      CloseableHttpClient client = (CloseableHttpClient) odataClient.getConfiguration().getHttpClientFactory().create(method, uri);
+      CloseableHttpClient client =
+              (CloseableHttpClient) odataClient.getConfiguration().getHttpClientFactory().create(method, uri);
 
       // HttpClient 5.x handles gzip automatically via interceptors
       return client;
   }
 }
+
