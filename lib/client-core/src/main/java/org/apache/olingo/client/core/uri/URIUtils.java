@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import javax.xml.datatype.Duration;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
@@ -292,16 +293,16 @@ public final class URIUtils {
         throw new ODataRuntimeException("While reading input for not chunked encoding", e);
       }
 
-      entity = new ByteArrayEntity(bytes);
+      entity = new ByteArrayEntity(bytes, ContentType.APPLICATION_OCTET_STREAM);
     } else {
-      entity = new InputStreamEntity(input, -1);
+      entity = new InputStreamEntity(input, -1, ContentType.APPLICATION_OCTET_STREAM);
     }
 
     if (!useChunked && entity.getContentLength() < 0) {
       useChunked = true;
     }
     // both entities can be sent in chunked way or not
-    entity.setChunked(useChunked);
+    //entity.setChunked(useChunked);
 
     return entity;
   }

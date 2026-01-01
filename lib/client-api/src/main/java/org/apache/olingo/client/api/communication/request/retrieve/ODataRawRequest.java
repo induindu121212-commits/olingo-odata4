@@ -21,6 +21,7 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 /**
@@ -40,5 +41,5 @@ public interface ODataRawRequest extends ODataRequest {
    *
    * @return query response.
    */
-  ODataRawResponse execute() throws URISyntaxException;
+  ODataRawResponse execute() throws URISyntaxException, IOException;
 }

@@ -211,7 +211,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     @Override
-    public R getODataResponse() {
+    public R getODataResponse() throws IOException {
       ClassicHttpResponse res = null;
       for (int i = 0; response == null && i < MAX_RETRY; i++) {
         res = checkMonitor(location);

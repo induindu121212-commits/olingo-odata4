@@ -48,7 +48,7 @@ public interface AsyncResponseWrapper<R extends ODataResponse> {
    *
    * @return real OData response.
    */
-  R getODataResponse();
+  R getODataResponse() throws IOException;
 
   /**
    * Specifies the location for the next monitor check.

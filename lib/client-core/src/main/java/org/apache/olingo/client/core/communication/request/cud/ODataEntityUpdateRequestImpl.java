@@ -120,7 +120,7 @@ public class ODataEntityUpdateRequestImpl<E extends ClientEntity>
 
     @Override
     @SuppressWarnings("unchecked")
-    public E getBody() {
+    public E getBody() throws IOException {
       if (entity == null) {
         try {
           final ResWrap<Entity> resource = odataClient.getDeserializer(ContentType.parse(getAccept())).

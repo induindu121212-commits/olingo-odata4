@@ -73,7 +73,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   /**
    * HTTP response.
    */
-  protected final HttpResponse res;
+  protected final ClassicHttpResponse res;
 
   /**
    * Response headers.

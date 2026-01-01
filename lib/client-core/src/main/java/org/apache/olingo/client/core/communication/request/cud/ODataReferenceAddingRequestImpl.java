@@ -95,7 +95,7 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
   private class ODataReferenceAddingResponseImpl extends AbstractODataResponse implements ODataReferenceAddingResponse {
 
     private ODataReferenceAddingResponseImpl(
-            final ODataClient odataClient, final CloseableHttpClient httpClient, final ClassicHttpResponse res) {
+            final ODataClient odataClient, final CloseableHttpClient httpClient, final ClassicHttpResponse res) throws IOException {
 
       super(odataClient, httpClient, res);
       this.close();
