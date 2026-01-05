@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.UUID;
@@ -57,7 +58,7 @@ import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataClient client, final ContentType contentType) throws IOException {
+  private void read(final ODataClient client, final ContentType contentType) throws IOException, URISyntaxException {
     final URIBuilder builder = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
         appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7"));
@@ -82,21 +83,21 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readAsAtom() throws IOException {
+  public void readAsAtom() throws IOException, URISyntaxException {
     read(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void readAsJSON() throws IOException {
+  public void readAsJSON() throws IOException, URISyntaxException {
     read(ODataClientFactory.getEdmEnabledClient(testDemoServiceRootURL, ContentType.JSON), ContentType.JSON);
   }
 
   @Test
-  public void readAsJSONFull() throws IOException {
+  public void readAsJSONFull() throws IOException, URISyntaxException {
     read(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void create(final ContentType contentType) throws IOException {
+  private void create(final ContentType contentType) throws IOException, URISyntaxException {
     final String random = RandomStringUtils.random(110);
     final InputStream input = IOUtils.toInputStream(random);
 
@@ -136,16 +137,16 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void createAsAtom() throws IOException {
+  public void createAsAtom() throws IOException, URISyntaxException {
     create(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void createAsJSON() throws IOException {
+  public void createAsJSON() throws IOException, URISyntaxException {
     create(ContentType.JSON);
   }
 
-  private void update(final ContentType contentType) throws IOException, EdmPrimitiveTypeException {
+  private void update(final ContentType contentType) throws IOException, EdmPrimitiveTypeException, URISyntaxException {
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
         appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).build();
@@ -172,12 +173,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void updateAsAtom() throws IOException, EdmPrimitiveTypeException {
+  public void updateAsAtom() throws IOException, EdmPrimitiveTypeException, URISyntaxException {
     update(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void updateAsJSON() throws IOException, EdmPrimitiveTypeException {
+  public void updateAsJSON() throws IOException, EdmPrimitiveTypeException, URISyntaxException {
     update(ContentType.JSON);
   }
 }

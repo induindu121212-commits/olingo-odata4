@@ -446,7 +446,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void retrieveIntPropertyValueTest() throws EdmPrimitiveTypeException {
+  public void retrieveIntPropertyValueTest() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
         appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyInt16");
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
