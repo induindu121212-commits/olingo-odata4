@@ -97,7 +97,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     return client;
   }
 
-  protected ClientEntity read(final ContentType contentType, final URI editLink) throws URISyntaxException, IOException {
+  protected ClientEntity read(final ContentType contentType, final URI editLink)
+          throws URISyntaxException, IOException {
     final ODataEntityRequest<ClientEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(editLink);
     req.setFormat(contentType);
 

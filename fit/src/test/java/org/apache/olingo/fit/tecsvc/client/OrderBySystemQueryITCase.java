@@ -134,7 +134,8 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
     fail(ES_TWO_PRIM, "PropertyString add 10", HttpStatusCode.BAD_REQUEST);
   }
 
-  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String orderByString) throws URISyntaxException, IOException {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String orderByString)
+          throws URISyntaxException, IOException {
     final URI uri =
         getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(entitySet)

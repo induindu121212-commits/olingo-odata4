@@ -63,7 +63,8 @@ public class PropertyTestITCase extends AbstractTestITCase {
     _enum(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void geospatial(final ODataClient client, final ContentType contentType) throws URISyntaxException, IOException {
+  private void geospatial(final ODataClient client, final ContentType contentType)
+          throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Home");
     final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().

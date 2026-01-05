@@ -55,7 +55,8 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "RowIndex")).isOpenType());
   }
 
-  private ClientEntity readRow(final ContentType contentType, final String uuid) throws URISyntaxException, IOException {
+  private ClientEntity readRow(final ContentType contentType, final String uuid) throws URISyntaxException,
+          IOException {
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
         appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
     return read(contentType, builder.build());

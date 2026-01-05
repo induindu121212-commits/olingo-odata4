@@ -43,7 +43,8 @@ import org.junit.Test;
 
 public class SingletonTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException, URISyntaxException, IOException {
+  private void read(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<ClientSingleton> singleton =
         client.getRetrieveRequestFactory().getSingletonRequest(builder.build());

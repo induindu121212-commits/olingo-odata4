@@ -1018,7 +1018,8 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
     return response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
   }
 
-  private void validateSet(final URI uri, final String cookie, final short... keys) throws EdmPrimitiveTypeException, URISyntaxException, IOException {
+  private void validateSet(final URI uri, final String cookie, final short... keys)
+          throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final EdmEnabledODataClient client = getEdmEnabledClient();
     final ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri);

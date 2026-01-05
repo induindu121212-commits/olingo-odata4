@@ -1048,7 +1048,8 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     fail("ESServerSidePaging", "contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
   }
   
-  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString) throws URISyntaxException, IOException {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString)
+          throws URISyntaxException, IOException {
     return sendRequest(entitySet, filterString, null);
   }
 

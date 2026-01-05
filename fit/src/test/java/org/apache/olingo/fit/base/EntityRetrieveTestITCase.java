@@ -40,7 +40,8 @@ import org.junit.Test;
  */
 public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
-  private void contained(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException, URISyntaxException, IOException {
+  private void contained(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101).
         appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101902).build();
@@ -71,7 +72,8 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     contained(edmClient, ContentType.JSON);
   }
 
-  private void entitySetNavigationLink(final ODataClient client, final ContentType contentType) throws URISyntaxException, IOException {
+  private void entitySetNavigationLink(final ODataClient client, final ContentType contentType) throws
+          URISyntaxException, IOException {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101).build();
     final ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);

@@ -333,7 +333,8 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
         "' and value '" + value + "' not found in entitySet '" + entitySet + "'");
   }
 
-  private void waitTillDone(AsyncResponseWrapper<?> async, int maxWaitInSeconds) throws InterruptedException, IOException {
+  private void waitTillDone(AsyncResponseWrapper<?> async, int maxWaitInSeconds)
+          throws InterruptedException, IOException {
     int waitCounter = maxWaitInSeconds * 1000;
     while (!async.isDone() && waitCounter > 0) {
       Thread.sleep(SLEEP_TIMEOUT_IN_MS);

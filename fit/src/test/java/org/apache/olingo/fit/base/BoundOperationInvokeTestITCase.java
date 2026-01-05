@@ -52,7 +52,8 @@ import org.junit.Test;
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
-  private void functions(final ContentType contentType) throws EdmPrimitiveTypeException, URISyntaxException, IOException {
+  private void functions(final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     // GetEmployeesCount
     URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<ClientSingleton> singletonReq =
@@ -266,7 +267,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertEquals(41.79, getActualAmountRes.getPrimitiveValue().toCastValue(Double.class), 0);
   }
 
-  private void actions(final ContentType contentType) throws EdmPrimitiveTypeException, URISyntaxException, IOException {
+  private void actions(final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     // IncreaseRevenue
     URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     ODataEntityRequest<ClientEntity> entityReq =

@@ -319,7 +319,8 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   private <T extends ClientInvokeResult> ODataInvokeResponse<T> callAction(final String name,
-      final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal) throws URISyntaxException, IOException {
+      final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal)
+          throws URISyntaxException, IOException {
     assumeTrue("The client would send wrongly formatted parameters in XML.",
         parameters == null || parameters.isEmpty() || isJson());  // TODO: XML case
     final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();

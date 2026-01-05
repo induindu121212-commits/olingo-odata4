@@ -910,7 +910,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void deleteSingleValuedNavigationPropertyReferenceWithCollectionValuedNavigationPropertyPartner() throws URISyntaxException, IOException {
+  public void deleteSingleValuedNavigationPropertyReferenceWithCollectionValuedNavigationPropertyPartner()
+          throws URISyntaxException, IOException {
     Map<String, Object> esTwoKEyNavKey = new HashMap<String, Object>();
     esTwoKEyNavKey.put("PropertyInt16", 1);
     esTwoKEyNavKey.put("PropertyString", "1");
@@ -971,7 +972,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void deleteCollectionValuedNavigationPropertyReferenceWithSingleValuedNavigationPropertyPartner() throws URISyntaxException, IOException {
+  public void deleteCollectionValuedNavigationPropertyReferenceWithSingleValuedNavigationPropertyPartner()
+          throws URISyntaxException, IOException {
     final URI uriDelete = getClient().newURIBuilder(SERVICE_URI)
                                 .appendEntitySetSegment(ES_KEY_NAV)
                                 .appendKeySegment(1)
@@ -1067,7 +1069,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
     }
   }
   
-  private void sendRequest(final URI uri, final int count, final String... expected) throws URISyntaxException, IOException {
+  private void sendRequest(final URI uri, final int count, final String... expected)
+          throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request =
         getEdmEnabledClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     setCookieHeader(request);
