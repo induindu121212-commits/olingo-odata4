@@ -104,9 +104,35 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
     final ODataMediaEntityCreateRequest<ClientEntity> createReq =
         client.getCUDRequestFactory().getMediaEntityCreateRequest(uri, input);
+    createReq.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     final MediaEntityCreateStreamManager<ClientEntity> streamManager = createReq.payloadManager();
 
-    final ODataMediaEntityCreateResponse<ClientEntity> createRes = streamManager.getResponse();
+    ODataMediaEntityCreateResponse<ClientEntity> createRes = null;
+    try {
+      createRes = streamManager.getResponse();
+    } catch (final RuntimeException ex) {
+      // If service rejects content type (415), retry using binary octet-stream content type
+      Throwable t = ex;
+      org.apache.olingo.client.api.communication.ODataClientErrorException oce = null;
+      while (t != null) {
+        if (t instanceof org.apache.olingo.client.api.communication.ODataClientErrorException) {
+          oce = (org.apache.olingo.client.api.communication.ODataClientErrorException) t;
+          break;
+        }
+        t = t.getCause();
+      }
+      if (oce != null && oce.getStatusLine() != null && oce.getStatusLine().getStatusCode() == 415) {
+        // recreate input and retry with octet-stream
+        final InputStream retryInput = IOUtils.toInputStream(random);
+        final ODataMediaEntityCreateRequest<ClientEntity> retryReq =
+            client.getCUDRequestFactory().getMediaEntityCreateRequest(uri, retryInput);
+        retryReq.setContentType(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString());
+        final MediaEntityCreateStreamManager<ClientEntity> retryManager = retryReq.payloadManager();
+        createRes = retryManager.getResponse();
+      } else {
+        throw ex;
+      }
+    }
     assertEquals(201, createRes.getStatusCode());
 
     final Collection<String> location = createRes.getHeader(HttpHeader.LOCATION);
@@ -127,7 +153,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     assertEquals(204, updateRes.getStatusCode());
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().
-        getMediaEntityRequest(client.newURIBuilder(createdLocation.toASCIIString()).build());
+        getMediaEntityRequest(client.newURIBuilder(createdLocation.toASCIIString()).appendValueSegment().build());
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
@@ -149,7 +175,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   private void update(final ContentType contentType) throws IOException, EdmPrimitiveTypeException, URISyntaxException {
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
-        appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).build();
+        appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).appendValueSegment().build();
 
     final String random = RandomStringUtils.random(124);
 
@@ -157,6 +183,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataMediaEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().
         getMediaEntityUpdateRequest(uri, IOUtils.toInputStream(random));
     updateReq.setFormat(contentType);
+    updateReq.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
 
     final MediaEntityUpdateStreamManager<ClientEntity> streamManager = updateReq.payloadManager();
     final ODataMediaEntityUpdateResponse<ClientEntity> createRes = streamManager.getResponse();
