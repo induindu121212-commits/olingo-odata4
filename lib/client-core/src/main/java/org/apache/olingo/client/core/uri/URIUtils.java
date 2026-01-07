@@ -302,6 +302,7 @@ public final class URIUtils {
       useChunked = true;
     }
     // both entities can be sent in chunked way or not
+    // No explicit setChunked call is required with HttpCore5.
     //entity.setChunked(useChunked);
 
     return entity;
