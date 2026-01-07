@@ -107,10 +107,14 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
         final ODataResponse res = chgres.next();
         if (res.getStatusCode() >= 400) {
           ContentType contentType = ContentType.fromAcceptHeader(request.getAccept());
-          // Use the overload that accepts ODataResponse so we don't need a StatusLine instance here
+          // Build a httpcore5 StatusLine from the ODataResponse and call the StatusLine overload
+          final org.apache.hc.core5.http.ProtocolVersion pv =
+              new org.apache.hc.core5.http.ProtocolVersion("HTTP", 1, 1);
+          final org.apache.hc.core5.http.message.StatusLine sl =
+              new org.apache.hc.core5.http.message.StatusLine(pv, res.getStatusCode(), res.getStatusMessage());
           errors.add(new ODataResponseError(ODataErrorResponseChecker.checkResponse(
                   service.getClient(),
-                  res,
+                  sl,
                   res.getRawResponse(),
                   contentType), index, requests.get(index)));
           if (!service.getClient().getConfiguration().isContinueOnError()) {
